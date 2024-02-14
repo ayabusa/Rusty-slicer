@@ -1,0 +1,100 @@
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+
+  color: #f6f6f6;
+  background-color: #292829;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+textarea {
+  width: 100%;
+}
+
+img{
+  height: 2em;
+  width: 2em;
+}
+
+.select-file {
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 0;
+}
+
+p{
+
+}
+
+
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+
+h1 {
+  text-align: center;
+}
+
+input,
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.5em 0.5em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: #ffffff;
+  background-color: #292829;
+  transition: border-color 0.25s, color 0.25s;
+  border-color: #ffffff;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #d88939;
+  color: #d88939;
+}
+button:active {
+  border-color: #d88939;
+  background-color: #353435;
+}
+
+input,
+button {
+  outline: none;
+}
+
+.slice-button{
+  border-color: #292829;
+  color: #292829;
+  background-color: #d88939;
+}
+
+.slice-button:hover{
+  border-color: #d88939;
+  color: #d88939;
+  background-color: #292829;
+}
+
+.slice-button:active {
+  background-color: #353435;
+}
+
+
+#greet-input {
+  margin-right: 5px;
+}

@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use native_dialog::FileDialog;
-use tauri::{AppHandle, Manager};
+use tauri::Manager;
 use std::sync::Mutex;
 
 #[macro_use]
@@ -22,15 +22,16 @@ struct Payload {
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 async fn select_file_button(app: tauri::AppHandle) {
-    let _ = app.emit_all("my_event", ());
     FILE_PATH.lock().unwrap().replace_range(.., &choose_file());
     println!("{}",FILE_PATH.lock().unwrap());
+    let _ = app.emit_all("file_path_changed", Payload { message: FILE_PATH.lock().unwrap().to_string() });
 }
 
 #[tauri::command]
-async fn select_folder_button() {
+async fn select_folder_button(app: tauri::AppHandle) {
     FOLDER_PATH.lock().unwrap().replace_range(.., &choose_folder());
     println!("{}",FOLDER_PATH.lock().unwrap());
+    let _ = app.emit_all("folder_path_changed", Payload { message: FOLDER_PATH.lock().unwrap().to_string() });
 }
 
 #[tauri::command]
@@ -44,7 +45,7 @@ fn choose_file() -> String{
     let path = FileDialog::new()
         .show_open_single_file()
         .unwrap();
-    format!("{:?}", path) // turn the FileDialog into a string
+    format!("{:?}", path).replace("Some(\"", "").replace("\")", "") // turn the FileDialog into a string and remove Some("")
 }
 
 fn choose_folder() -> String{
@@ -52,7 +53,7 @@ fn choose_folder() -> String{
     let path = FileDialog::new()
         .show_open_single_dir()
         .unwrap();
-    format!("{:?}", path) // turn the FileDialog into a string
+    format!("{:?}", path).replace("Some(\"", "").replace("\")", "") // turn the FileDialog into a string
 }
 
 fn main() {

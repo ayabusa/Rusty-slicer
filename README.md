@@ -1,7 +1,15 @@
-# Tauri + Vanilla
+# Rust Slicer
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
+The rust slicer is a rust app powered by the tauri framework. It is currently really WIP so use it at your own risk.
 
-## Recommended IDE Setup
+## How to build
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+1. Install Rust using rustup
+2. Install Tauri
+3. Clone the repo 
+
+    ``` git clone "https://github.com/ayabusa/Rusty-slicer.git" ```
+
+    ```cd Rusty-slicer```
+4. Build using ```cargo tauri dev```
+

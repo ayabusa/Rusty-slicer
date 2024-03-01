@@ -3,7 +3,8 @@
 
 use native_dialog::FileDialog;
 use tauri::Manager;
-use std::sync::Mutex;
+use core::time;
+use std::{fmt::format, fs, io::{Error, ErrorKind}, path::{Path, PathBuf}, sync::Mutex, ffi::OsString};
 
 #[macro_use]
 extern crate lazy_static;
@@ -35,8 +36,77 @@ async fn select_folder_button(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
+fn slice_button(app: tauri::AppHandle, chapter: &str){
+    // Try to format the chapters and panic if it was not able to
+    let formated_chapters = match format_chapter(chapter) {
+        Ok(res) => res,
+        Err(error) => panic!("Problem slicing chapter: {:?}", error),
+    };
+    let time_codes: Vec<String> = formated_chapters.0;
+    let title_names: Vec<String> = formated_chapters.1;
+
+    println!("time codes: \n{:?}\ntitle names: \n{:?}", time_codes, title_names);
+
+    // create folder if it does not exist
+    /*match fs::create_dir_all(FOLDER_PATH.lock().unwrap().to_owned()) {
+        Ok(res) => res,
+        Err(error) => panic!("Problem creating directory : {:?}", error),
+    };*/
+
+    for i in 0..time_codes.len(){
+        let args: Vec<String>;
+        let mut output_file: PathBuf = PathBuf::from(&FOLDER_PATH.lock().unwrap().to_owned());
+        output_file.push(format!("{:02} - {}", i+1, title_names[i]));
+        output_file.set_extension("mp3");
+
+        if i+1<time_codes.len() {
+            args = vec!["-i".to_owned(), 
+                FILE_PATH.lock().unwrap().to_owned(),
+                "-ss".to_owned(),
+                time_codes[i].to_owned(),
+                "-to".to_owned(),
+                time_codes[i+1].to_owned(),
+                //format!("{:?}", output_file),
+                output_file.display().to_string()];
+        }else {
+            args = vec!["-version".to_owned()];
+        }
+
+        // launch the final ffmpeg command
+        launch_ffmpeg(app.clone(), args);
+    }
+}
+
+#[tauri::command]
 fn debug_call(message: &str){
     println!("[DBG] {}", message);
+}
+
+/// Separate time codes from title and return it to a tuple of vector of string
+/// # Example
+/// ```
+/// let formated_chapters = match format_chapter(chapter) {
+///    Ok(res) => res,
+///     Err(error) => panic!("Problem slicing chapter: {:?}", error),
+/// };
+/// let time_codes: Vec<String> = formated_chapters.0;
+/// let title_names: Vec<String> = formated_chapters.1;
+/// ```
+fn format_chapter(chapter: &str) -> Result<(Vec<String>, Vec<String>), Error>{
+    let lines: Vec<&str> = chapter.split("\n").collect();
+    let mut time_code: Vec<String> = vec![];
+    let mut title_names: Vec<String> = vec![];
+
+    for l in lines.iter(){
+        if l.is_empty() { break; }
+        let splited_line = l.split(" - ").collect::<Vec<&str>>();
+        if splited_line.len()<2 || splited_line[1] == "" { // To avoid blank title
+            return Err(Error::new(ErrorKind::Other, "No title associated with the time code")); 
+        }
+        time_code.push(splited_line[0].to_owned());
+        title_names.push(splited_line[1..].join(" - "));
+    }
+    Ok((time_code, title_names))
 }
 
 // prompt user file chooser using native_dialogue crate
@@ -56,10 +126,29 @@ fn choose_folder() -> String{
     format!("{:?}", path).replace("Some(\"", "").replace("\")", "") // turn the FileDialog into a string
 }
 
+fn launch_ffmpeg(app: tauri::AppHandle, args: Vec<String>) {
+    // get the path from the bundled binary
+    let resource_path = app.path_resolver()
+      .resolve_resource("resources/ffmpeg-linux")
+      .expect("failed to resolve resource");
+
+    println!("using ffmpeg binary : {}\nwith the following argument : {:?}", resource_path.display(), args);
+    // launch the command
+    let output = std::process::Command::new(resource_path.as_os_str())
+                     .args(args)
+                     .output()
+                     .expect("failed to execute process");
+
+    // print the output of the ffmpeg command
+    println!("status: {}", output.status);
+    println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+    println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+}
+
 fn main() {
     // generate the tauri app
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![select_file_button, select_folder_button, debug_call])
+        .invoke_handler(tauri::generate_handler![select_file_button, select_folder_button, debug_call, slice_button])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

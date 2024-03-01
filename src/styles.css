@@ -29,8 +29,14 @@ img{
   row-gap: 0;
 }
 
-p{
+::-moz-selection { /* Code for Firefox */
+  color: #ffffff;
+  background: #d88939;
+}
 
+::selection {
+  color: #ffffff;
+  background: #d88939;
 }
 
 

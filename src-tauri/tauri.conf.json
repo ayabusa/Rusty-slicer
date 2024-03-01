@@ -14,6 +14,9 @@
       "shell": {
         "all": true,
         "open": true
+      },
+      "fs": {
+        "scope": ["$RESOURCE/*"]
       }
     },
     "windows": [
@@ -22,7 +25,7 @@
         "resizable": true,
         "title": "Rusty slicer",
         "width": 400,
-        "height": 800
+        "height": 880
       }
     ],
     "security": {
@@ -38,6 +41,9 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "resources": [
+        "resources/ffmpeg-linux"
       ]
     }
   }

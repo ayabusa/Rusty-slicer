@@ -14,6 +14,11 @@ function slice_button_pressed(){
     invoke("slice_button", {chapter: document.getElementById("chapterList").value})
 }
 
+function about_button_pressed(){
+    invoke("about_button")
+}
+
 document.getElementById("folderButton").addEventListener("click", select_folder_button_pressed);
 document.getElementById("fileButton").addEventListener("click", select_file_button_pressed);
 document.getElementById("sliceButton").addEventListener("click", slice_button_pressed);
+document.getElementById("aboutButton").addEventListener("click", about_button_pressed);

@@ -2,9 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use native_dialog::FileDialog;
-use tauri::Manager;
-use core::time;
-use std::{fmt::format, fs, io::{Error, ErrorKind}, path::{Path, PathBuf}, sync::Mutex, ffi::OsString};
+use tauri::{Manager, PhysicalSize, Size};
+use std::{io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
 
 #[macro_use]
 extern crate lazy_static;
@@ -78,6 +77,17 @@ fn slice_button(app: tauri::AppHandle, chapter: &str){
 }
 
 #[tauri::command]
+async fn about_button(handle: tauri::AppHandle) {
+  let _about_window = tauri::WindowBuilder::new(
+    &handle,
+    "about", /* the unique window label */
+    tauri::WindowUrl::App("about.html".into())
+    ).build().expect("failed to create about window");
+    _about_window.set_title("About Rusty Slicer").unwrap();
+    _about_window.set_size(Size::Physical(PhysicalSize { width: 400, height: 600 })).unwrap();
+}
+
+#[tauri::command]
 fn debug_call(message: &str){
     println!("[DBG] {}", message);
 }
@@ -148,7 +158,7 @@ fn launch_ffmpeg(app: tauri::AppHandle, args: Vec<String>) {
 fn main() {
     // generate the tauri app
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![select_file_button, select_folder_button, debug_call, slice_button])
+        .invoke_handler(tauri::generate_handler![select_file_button, select_folder_button, debug_call, slice_button, about_button])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

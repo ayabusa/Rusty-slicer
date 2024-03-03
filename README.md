@@ -15,3 +15,10 @@ The rust slicer is a rust app powered by the tauri framework. It is currently re
     ```cd Rusty-slicer```
 4. Build using ```cargo tauri dev```
 
+## TODO
+
+- [x] Working Program
+- [ ] Use the file format choosen
+- [ ] Dummy proof
+- [ ] little website
+- [ ] Port to Windows

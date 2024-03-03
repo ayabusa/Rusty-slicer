@@ -2,6 +2,8 @@
 
 The rust slicer is a rust app powered by the tauri framework. It is currently really WIP so use it at your own risk.
 
+![Screenshot of the rusty slicer application](/Screenshot-Rusty-Slicer.png)
+
 ## How to build
 
 1. Install Rust using rustup

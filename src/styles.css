@@ -140,3 +140,14 @@ button {
   from { background-position: 0 0, 50px 50px, 50px 0; }
   to { background-position: -100px -100px, -50px -50px, -50px -100px; }
 }
+
+progress::-moz-progress-bar { background: #d88939; }
+progress::-webkit-progress-value { background: #d88939; }
+progress {
+  color: #d88939;
+  width: 100%;
+}
+
+.progress_center {
+  text-align: center;
+}

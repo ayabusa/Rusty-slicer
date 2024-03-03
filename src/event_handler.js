@@ -1,7 +1,5 @@
 const { listen } = window.__TAURI__.event
 
-document.getElementById("fileLocation").innerHTML = "hey";
-
 // listen for file location from rust backend
 const unlistenfile = await listen('file_path_changed', (event) => {
   document.getElementById("fileLocation").innerHTML = event.payload.message;

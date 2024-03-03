@@ -35,9 +35,9 @@ async fn select_folder_button(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-fn slice_button(app: tauri::AppHandle, chapter: &str){
+async fn slice_button(app: tauri::AppHandle, chapter: String){
     // Try to format the chapters and panic if it was not able to
-    let formated_chapters = match format_chapter(chapter) {
+    let formated_chapters = match format_chapter(&chapter) {
         Ok(res) => res,
         Err(error) => panic!("Problem slicing chapter: {:?}", error),
     };
@@ -51,6 +51,15 @@ fn slice_button(app: tauri::AppHandle, chapter: &str){
         Ok(res) => res,
         Err(error) => panic!("Problem creating directory : {:?}", error),
     };*/
+
+    // create the progress window
+    let _about_window = tauri::WindowBuilder::new(
+        &app,
+        "progress", /* the unique window label */
+        tauri::WindowUrl::App("progress.html".into())
+        ).build().expect("failed to create progress window");
+        _about_window.set_title("Slicing progress").unwrap();
+        _about_window.set_size(Size::Physical(PhysicalSize { width: 400, height: 100 })).unwrap();
 
     for i in 0..time_codes.len(){
         let args: Vec<String>;
@@ -67,12 +76,20 @@ fn slice_button(app: tauri::AppHandle, chapter: &str){
                 time_codes[i+1].to_owned(),
                 //format!("{:?}", output_file),
                 output_file.display().to_string()];
-        }else {
-            args = vec!["-version".to_owned()];
+        }else { // case for the last song
+            args = vec!["-i".to_owned(), 
+                FILE_PATH.lock().unwrap().to_owned(),
+                "-ss".to_owned(),
+                time_codes[i].to_owned(),
+                //format!("{:?}", output_file),
+                output_file.display().to_string()];
         }
 
         // launch the final ffmpeg command
         launch_ffmpeg(app.clone(), args);
+
+        // update progress bar on frontend
+        app.emit_all("progress_state_changed", Payload { message: format!("{}", (i+1)*100/time_codes.len()) }).unwrap();
     }
 }
 

@@ -11,7 +11,7 @@ function select_folder_button_pressed(){
 }
 
 function slice_button_pressed(){
-    invoke("slice_button", {chapter: document.getElementById("chapterList").value})
+    invoke("slice_button", {chapter: document.getElementById("chapterList").value, fileformat: document.getElementById("fileFormatSelect").value})
 }
 
 function about_button_pressed(){

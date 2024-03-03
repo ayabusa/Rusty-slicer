@@ -35,7 +35,7 @@ async fn select_folder_button(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-async fn slice_button(app: tauri::AppHandle, chapter: String){
+async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String){
     // Try to format the chapters and panic if it was not able to
     let formated_chapters = match format_chapter(&chapter) {
         Ok(res) => res,
@@ -63,9 +63,10 @@ async fn slice_button(app: tauri::AppHandle, chapter: String){
 
     for i in 0..time_codes.len(){
         let args: Vec<String>;
+        // create the path to the output file
         let mut output_file: PathBuf = PathBuf::from(&FOLDER_PATH.lock().unwrap().to_owned());
         output_file.push(format!("{:02} - {}", i+1, title_names[i]));
-        output_file.set_extension("mp3");
+        output_file.set_extension(&fileformat);
 
         if i+1<time_codes.len() {
             args = vec!["-i".to_owned(), 
@@ -74,6 +75,7 @@ async fn slice_button(app: tauri::AppHandle, chapter: String){
                 time_codes[i].to_owned(),
                 "-to".to_owned(),
                 time_codes[i+1].to_owned(),
+                "-vn".to_owned(), // no video
                 //format!("{:?}", output_file),
                 output_file.display().to_string()];
         }else { // case for the last song
@@ -81,6 +83,7 @@ async fn slice_button(app: tauri::AppHandle, chapter: String){
                 FILE_PATH.lock().unwrap().to_owned(),
                 "-ss".to_owned(),
                 time_codes[i].to_owned(),
+                "-vn".to_owned(), // no video
                 //format!("{:?}", output_file),
                 output_file.display().to_string()];
         }

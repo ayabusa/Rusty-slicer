@@ -157,9 +157,21 @@ fn choose_folder() -> String{
 }
 
 fn launch_ffmpeg(app: tauri::AppHandle, args: Vec<String>) {
+    let bin_name = if cfg!(target_os = "macos") {
+        PathBuf::from("ffmpeg-macos")
+      } else if cfg!(windows) {
+        PathBuf::from("ffmpeg-windows.exe")
+      } else if cfg!(unix) {
+        PathBuf::from("ffmpeg-linux")
+      } else {
+        panic!("[RUSTY SLICER] can't find what os it is !")
+      };
+    let mut bin_path = PathBuf::from("resources");
+    bin_path.push(bin_name);
+
     // get the path from the bundled binary
     let resource_path = app.path_resolver()
-      .resolve_resource("resources/ffmpeg-linux")
+      .resolve_resource(bin_path)
       .expect("failed to resolve resource");
 
     println!("using ffmpeg binary : {}\nwith the following argument : {:?}", resource_path.display(), args);

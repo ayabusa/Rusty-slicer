@@ -19,7 +19,8 @@ The rust slicer is a rust app powered by the tauri framework. It is currently re
 
 - [x] Working Program
 - [x] Use the file format choosen
-- [ ] Dummy proof
+- [x] Dummy proof
+- [ ] Icons
 - [ ] little website
 - [x] Port to Windows
 

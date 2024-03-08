@@ -11,6 +11,7 @@ function select_folder_button_pressed(){
 }
 
 function slice_button_pressed(){
+    document.getElementById("errorLabel").innerHTML = "";
     invoke("slice_button", {chapter: document.getElementById("chapterList").value, fileformat: document.getElementById("fileFormatSelect").value})
 }
 

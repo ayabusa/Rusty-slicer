@@ -3,7 +3,7 @@
 
 use native_dialog::FileDialog;
 use tauri::{Manager, PhysicalSize, Size};
-use std::{io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
+use std::{env, io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
 
 #[macro_use]
 extern crate lazy_static;
@@ -36,11 +36,30 @@ async fn select_folder_button(app: tauri::AppHandle) {
 
 #[tauri::command]
 async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String){
+    // Check the user selected a file and a folder
+    let mut cancel_slicing = false;
+    if FILE_PATH.lock().unwrap().to_owned() == "" || FILE_PATH.lock().unwrap().to_owned() == "None"{
+        println!("error no file selected, slicing aborted");
+        app.emit_all("backend_error", Payload { message: "file_empty".to_owned() }).unwrap();
+        cancel_slicing = true;
+    }
+    if FOLDER_PATH.lock().unwrap().to_owned() == "" || FOLDER_PATH.lock().unwrap().to_owned() == "None"{
+        println!("error no folder selected, slicing aborted");
+        app.emit_all("backend_error", Payload { message: "folder_empty".to_owned() }).unwrap();
+        cancel_slicing = true;
+    }
+    if cancel_slicing == true { return; }
+
     // Try to format the chapters and panic if it was not able to
     let formated_chapters = match format_chapter(&chapter) {
         Ok(res) => res,
-        Err(error) => panic!("Problem slicing chapter: {:?}", error),
+        Err(_error) => {
+            println!("error formating chapters, slicing aborted");
+            app.emit_all("backend_error", Payload { message: "formating_issue".to_owned() }).unwrap();
+            return;
+        },
     };
+
     let time_codes: Vec<String> = formated_chapters.0;
     let title_names: Vec<String> = formated_chapters.1;
 
@@ -126,6 +145,7 @@ fn format_chapter(chapter: &str) -> Result<(Vec<String>, Vec<String>), Error>{
     let lines: Vec<&str> = chapter.split("\n").collect();
     let mut time_code: Vec<String> = vec![];
     let mut title_names: Vec<String> = vec![];
+    if lines.len() < 2 { return Err(Error::new(ErrorKind::Other, "Lines are empty")); }
 
     for l in lines.iter(){
         if l.is_empty() { break; }
@@ -133,10 +153,22 @@ fn format_chapter(chapter: &str) -> Result<(Vec<String>, Vec<String>), Error>{
         if splited_line.len()<2 || splited_line[1] == "" { // To avoid blank title
             return Err(Error::new(ErrorKind::Other, "No title associated with the time code")); 
         }
+        if !is_time_code_valid(&splited_line[0].to_owned()){
+            return Err(Error::new(ErrorKind::Other, "one or multiple time code is invalid"));
+        }
         time_code.push(splited_line[0].to_owned());
         title_names.push(splited_line[1..].join(" - "));
     }
     Ok((time_code, title_names))
+}
+
+/// return true if the time code is valid, and false otherwise
+fn is_time_code_valid(time_code: &String) -> bool{
+    let allowed_char = "0123456789:";
+    for c in time_code.chars(){
+        if !allowed_char.contains(c) { return false; }
+    }
+    true
 }
 
 // prompt user file chooser using native_dialogue crate
@@ -188,6 +220,7 @@ fn launch_ffmpeg(app: tauri::AppHandle, args: Vec<String>) {
 }
 
 fn main() {
+    env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
     // generate the tauri app
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![select_file_button, select_folder_button, debug_call, slice_button, about_button])

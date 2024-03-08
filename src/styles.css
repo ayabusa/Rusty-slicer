@@ -1,5 +1,10 @@
+@font-face {
+  font-family: FiraSans-extrabold;
+  src: url(fonts/FiraSans-Bold.ttf);
+}
+
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: FiraSans-extrabold, Inter, Avenir, Helvetica, Arial, sans-serif;
 
   color: #f6f6f6;
   background-color: #292829;

@@ -24,8 +24,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Rusty slicer",
-        "width": 400,
-        "height": 880
+        "width": 450,
+        "height": 950
       }
     ],
     "security": {

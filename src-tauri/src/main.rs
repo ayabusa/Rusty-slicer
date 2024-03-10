@@ -3,7 +3,10 @@
 
 use native_dialog::FileDialog;
 use tauri::{Manager, PhysicalSize, Size};
-use std::{env, io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
+use std::{env, fmt::Display, io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
+
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
 
 #[macro_use]
 extern crate lazy_static;
@@ -53,9 +56,9 @@ async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String
     // Try to format the chapters and panic if it was not able to
     let formated_chapters = match format_chapter(&chapter) {
         Ok(res) => res,
-        Err(_error) => {
+        Err(error) => {
             println!("error formating chapters, slicing aborted");
-            app.emit_all("backend_error", Payload { message: "formating_issue".to_owned() }).unwrap();
+            app.emit_all("formatting_error", Payload { message: error.to_string() }).unwrap();
             return;
         },
     };
@@ -149,6 +152,7 @@ fn format_chapter(chapter: &str) -> Result<(Vec<String>, Vec<String>), Error>{
 
     for l in lines.iter(){
         if l.is_empty() { break; }
+        if l.len() > 200 { return Err(Error::new(ErrorKind::Other, "Line is too big")); }
         let splited_line = l.split(" - ").collect::<Vec<&str>>();
         if splited_line.len()<2 || splited_line[1] == "" { // To avoid blank title
             return Err(Error::new(ErrorKind::Other, "No title associated with the time code")); 
@@ -208,6 +212,13 @@ fn launch_ffmpeg(app: tauri::AppHandle, args: Vec<String>) {
 
     println!("using ffmpeg binary : {}\nwith the following argument : {:?}", resource_path.display(), args);
     // launch the command
+    #[cfg(target_os = "windows")]
+    let output = std::process::Command::new(resource_path.as_os_str())
+                     .args(args)
+                     .creation_flags(0x08000000) // avoid the terminal from showing up
+                     .output()
+                     .expect("failed to execute process");
+    #[cfg(not (target_os = "windows"))]
     let output = std::process::Command::new(resource_path.as_os_str())
                      .args(args)
                      .output()

@@ -3,7 +3,7 @@
 
 use native_dialog::FileDialog;
 use tauri::{Manager, PhysicalSize, Size};
-use std::{env, fmt::Display, io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
+use std::{env, io::{Error, ErrorKind}, path::PathBuf, sync::Mutex};
 
 #[cfg(target_os = "windows")]
 use std::os::windows::process::CommandExt;

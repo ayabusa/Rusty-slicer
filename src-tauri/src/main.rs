@@ -75,13 +75,13 @@ async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String
     };*/
 
     // create the progress window
-    let _about_window = tauri::WindowBuilder::new(
+    let _progress_window = tauri::WindowBuilder::new(
         &app,
         "progress", /* the unique window label */
         tauri::WindowUrl::App("progress.html".into())
         ).build().expect("failed to create progress window");
-        _about_window.set_title("Slicing progress").unwrap();
-        _about_window.set_size(Size::Physical(PhysicalSize { width: 400, height: 100 })).unwrap();
+        _progress_window.set_title("Slicing progress").unwrap();
+        _progress_window.set_size(Size::Physical(PhysicalSize { width: 400, height: 100 })).unwrap();
 
     for i in 0..time_codes.len(){
         let args: Vec<String>;
@@ -91,7 +91,9 @@ async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String
         output_file.set_extension(&fileformat);
 
         if i+1<time_codes.len() {
-            args = vec!["-i".to_owned(), 
+            args = vec![
+                "-y".to_owned(), // overwrite existing files
+                "-i".to_owned(), 
                 FILE_PATH.lock().unwrap().to_owned(),
                 "-ss".to_owned(),
                 time_codes[i].to_owned(),
@@ -101,7 +103,9 @@ async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String
                 //format!("{:?}", output_file),
                 output_file.display().to_string()];
         }else { // case for the last song
-            args = vec!["-i".to_owned(), 
+            args = vec![
+                "-y".to_owned(), // overwrite existing files
+                "-i".to_owned(), 
                 FILE_PATH.lock().unwrap().to_owned(),
                 "-ss".to_owned(),
                 time_codes[i].to_owned(),
@@ -116,6 +120,15 @@ async fn slice_button(app: tauri::AppHandle, chapter: String, fileformat: String
         // update progress bar on frontend
         app.emit_all("progress_state_changed", Payload { message: format!("{}", (i+1)*100/time_codes.len()) }).unwrap();
     }
+    _progress_window.close().unwrap(); // close the progress window, before creating the done one
+
+    let _done_window = tauri::WindowBuilder::new(
+        &app,
+        "done", /* the unique window label */
+        tauri::WindowUrl::App("done.html".into())
+        ).build().expect("failed to create done window");
+        _done_window.set_title("Rusty Slicer").unwrap();
+        _done_window.set_size(Size::Physical(PhysicalSize { width: 400, height: 100 })).unwrap();
 }
 
 #[tauri::command]

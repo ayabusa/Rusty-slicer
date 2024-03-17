@@ -6,7 +6,7 @@
   },
   "package": {
     "productName": "rusty-slicer",
-    "version": "0.0.1"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -24,8 +24,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Rusty slicer",
-        "width": 450,
-        "height": 950
+        "width": 830,
+        "height": 700
       }
     ],
     "security": {

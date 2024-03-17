@@ -16,47 +16,52 @@
     <div class="main-container">
       <div>
         <h3>Welcome to the Rusty slicer! <img src="assets/cat-vibe-vibe-cat.gif"></h1>
-        <div class="select-file">
-          <div>
-            <h4><b> Input file </b></h4>
-            <p id="fileLocation"> no location choosen </p>
-          </div>
-          <button id="fileButton">choose file 📂</button>
-        </div>
 
-        <div>
-          <h4><b> Chapter list (timecode - song name) </b></h4>
-          <textarea id="chapterList" rows="30" cols="10000" placeholder="0:00 - my first song
+        <div class="action-container">
+          <div>
+            <h4><b> Chapter list (timecode - song name) </b></h4>
+            <textarea id="chapterList" rows="30" cols="10000" placeholder="0:00 - my first song
 3:30 - another one
 13:37 - one more time - Daft punk"></textarea>
-          <p id="errorLabel" style="color: red;"></p>
-        </div>
-
-        <div class="select-file">
-          <div>
-            <p><b> Output folder </b> </p>
-            <p id="folderLocation"> no location choosen </p>
+            <p id="errorLabel" style="color: red;"></p>
           </div>
-          <button id="folderButton">choose folder 📂</button>
-        </div>
 
-        <div class="select-file">
-          <p><b> output type </b></p>
-          <select id="fileFormatSelect">
-            <option value="mp3">mp3 (recommended)</option>
-            <option value="ogg">ogg</option>
-            <option value="flac">flac (really long)</option>
-            <option value="m4a">m4a</option>
-          </select>
-        </div>
+          <div>
+            <div class="select-file">
+              <div>
+                <h4><b> Input file </b></h4>
+                <p id="fileLocation"> no location choosen </p>
+              </div>
+              <button id="fileButton">choose file 📂</button>
+            </div>
 
-        <button class="slice-button" id="sliceButton"> Slice 🔪</button>
+            <div class="select-file">
+              <div>
+                <p><b> Output folder </b> </p>
+                <p id="folderLocation"> no location choosen </p>
+              </div>
+              <button id="folderButton">choose folder 📂</button>
+            </div>
+
+            <div class="select-file">
+              <p><b> output type </b></p>
+              <select id="fileFormatSelect">
+                <option value="mp3">mp3 (recommended)</option>
+                <option value="ogg">ogg</option>
+                <option value="flac">flac (really long)</option>
+                <option value="m4a">m4a</option>
+              </select>
+            </div>
+            <br> <br> 
+            <button class="slice-button" id="sliceButton"> Slice 🔪</button>
+          </div>
+        </div>
       </div>
 
         <footer>
           <br>
           <div class="select-file">
-            <div>
+            <div class="credit_main">
               made by <a target="_blank" href="https://www.ayabusa.dev">
                 ayabusa
               </a> ;D 

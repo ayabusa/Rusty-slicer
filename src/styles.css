@@ -17,7 +17,8 @@
 }
 
 textarea {
-  width: 100%;
+  width: 95%;
+  flex: 1;
 }
 
 img{
@@ -42,6 +43,13 @@ img{
   height: 97vh;
 }
 
+.action-container{
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+
+}
+
 ::-moz-selection { /* Code for Firefox */
   color: #ffffff;
   background: #d88939;
@@ -56,6 +64,10 @@ a {
   color: #d88939;
 }
 
+.credit_main {
+  margin-left: auto;
+  margin-right: auto;
+}
 .credit {
   text-align: center;
 }
@@ -107,6 +119,7 @@ button {
   border-color: #292829;
   color: #292829;
   background-color: #d88939;
+  float: right;
 }
 
 .slice-button:hover{

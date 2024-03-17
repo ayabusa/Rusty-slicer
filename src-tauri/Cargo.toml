@@ -1,6 +1,6 @@
 [package]
 name = "rusty-slicer"
-version = "0.0.1"
+version = "1.0.0"
 description = "An app to slice your playlist into multiple files"
 authors = ["Ayabusa"]
 edition = "2021"
